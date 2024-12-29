@@ -1,7 +1,7 @@
 import pool from "../config/db.js";
 
 // book a ticket
-export const bookTicket = async (ticketIds = [], email) => {
+export const bookTicketModel = async (ticketIds = [], email) => {
     // First check if user already has any tickets booked
     const existingTickets = await pool.query("SELECT ticket_id FROM tickets");
 
@@ -54,7 +54,7 @@ export const bookTicket = async (ticketIds = [], email) => {
 };
 
 // get total ticket booked
-export const getTotalTicketBooked = async () => {
+export const getTotalTicketBookedModel = async () => {
     const result = await pool.query("SELECT email, ticket_id FROM tickets");
     const allTickets = result.rows.reduce((acc, row) => {
         return [...acc, ...row.ticket_id];
@@ -63,21 +63,18 @@ export const getTotalTicketBooked = async () => {
 };
 
 // cancel a ticket and update the table with the ticket id and email
-export const cancelTicket = async (ticketId, email) => {
-    const currentTickets = await pool.query("SELECT ticket_id FROM tickets WHERE email = $1", [email]);
-
-    if (!currentTickets.rows[0] || !currentTickets.rows[0].ticket_id) {
-        return null;
-    }
-
-    // Remove the specified ticketId from the array
-    const updatedTicketIds = currentTickets.rows[0].ticket_id.filter(id => id !== ticketId);
-
-    // Update the tickets table with the new array
+export const cancelTicketModel = async (email) => {
     const result = await pool.query(
-        "UPDATE tickets SET ticket_id = $1 WHERE email = $2 RETURNING *",
-        [updatedTicketIds, email]
+        "DELETE FROM tickets WHERE email = $1 RETURNING *",
+        [email]
     );
-    return result.rows[0];
+    return result.rows;
+};
+
+
+// get all tickets booked by a user
+export const getTicketsByEmailModel = async (email) => {
+    const result = await pool.query("SELECT * FROM tickets WHERE email = $1", [email]);
+    return result.rows;
 };
 

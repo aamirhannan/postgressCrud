@@ -7,7 +7,6 @@ const ticketBookingSchema = Joi.object({
 
 const cancelTicketSchema = Joi.object({
     email: Joi.string().email().required(),
-    ticket_id: Joi.array().items(Joi.number()).required()
 });
 
 const getTotalTicketBookedSchema = Joi.object({
