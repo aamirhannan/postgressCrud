@@ -3,13 +3,13 @@ import dotenv from "dotenv";
 dotenv.config();
 const { Pool } = pkg;
 // console.log(process.env.DB_USER);
+// ... existing imports ...
+
 const pool = new Pool({
-    user: process.env.DB_USER, // username
-    host: process.env.DB_HOST, // host
-    database: process.env.DB_DATABASE, // database name
-    password: process.env.DB_PASSWORD, // password
-    port: process.env.DB_PORT, // port
+    connectionString: process.env.POSTGRES_URL + "?sslmode=require"
 });
+
+// ... existing event handlers and export ...
 
 pool.on("connect", () => {
     console.log("Connected to the database");
